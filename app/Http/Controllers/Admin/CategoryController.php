@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -14,7 +17,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('home.category.index');
+        $title = 'Category - Index';
+        $category = Category::latest()->get();
+        return view('home.category.index', compact('category', 'title'));
     }
 
     /**
@@ -24,7 +29,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        $title = 'Category - Index';
+        return view('home.category.create', compact('title'));
     }
 
     /**
@@ -35,7 +41,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name'=>'required|max:255',
+            'image'=>'required|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $image = $request->file('image');
+        $image->storeAs('public/category', $image->hashName());
+
+        // melakukan save to database
+        Category::create([
+            'name'=>$request->name,
+            'slug'=>Str::slug($request->name),
+            'image'=>$image->hashName()
+        ]);
+
+        // melakukan return redirect
+        return redirect()->route('category.index')->with('success', 'Category Berhasil Disimpan');
     }
 
     /**
@@ -57,7 +79,10 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $title = 'Category - Edit';
+        $category = Category::find($id);
+
+        return view('home.category.edit', compact('title', 'category'));
     }
 
     /**
@@ -69,7 +94,33 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name'=>'required|max:255',
+            'image'=>'image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $category = Category::find($id);
+
+        if($request->file('image') == '') {
+            $category->update([
+                'name'=>$request->name,
+                'slug'=>Str::slug($request->name)
+            ]);
+        } else {
+            // Hapus image lama
+            Storage::disk('local')->delete('public/category/' . basename($category->image));
+
+            $image = $request->file('image');
+            $image->storeAs('public/category', $image->hashName());
+
+            $category->update([
+                'name'=>$request->name,
+                'slug'=>Str::slug($request->name),
+                'image' => $image->hashName()
+            ]);
+        }
+
+        return redirect()->route('category.index');
     }
 
     /**

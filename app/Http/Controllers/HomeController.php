@@ -23,6 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $title = 'Category - Index';
+        return view('home', compact('title'));
     }
 }

@@ -10,12 +10,20 @@
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link " href="{{ route('category.index') }}">
-                <i class="bi bi-basket2"></i>
-                <span>Category</span>
-            </a>
-        </li>
+        @if (Auth::user()->role == 'admin')
+            <li class="nav-item">
+                <a class="nav-link " href="{{ route('category.index') }}">
+                    <i class="bi bi-basket2"></i>
+                    <span>Category</span>
+                </a>
+                <a class="nav-link " href="#">
+                    <i class="bi bi-newspaper"></i>
+                    <span>News</span>
+                </a>
+            </li>
+        @else
+        @endif
+
         <!-- End Dashboard Nav -->
 
         {{-- <li class="nav-item">

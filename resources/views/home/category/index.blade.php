@@ -44,6 +44,16 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         {{-- End Edit --}}
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('category.destroy', $row->id) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger d-inline">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                        {{-- Delete --}}
                                     </td>
                                 </tr>
                             @empty
@@ -51,6 +61,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{ $category->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>

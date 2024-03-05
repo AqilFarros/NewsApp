@@ -16,7 +16,7 @@
                     <i class="bi bi-basket2"></i>
                     <span>Category</span>
                 </a>
-                <a class="nav-link " href="#">
+                <a class="nav-link " href="{{ route('news.index') }}">
                     <i class="bi bi-newspaper"></i>
                     <span>News</span>
                 </a>

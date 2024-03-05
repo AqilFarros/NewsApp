@@ -6,6 +6,14 @@
             <h3>Create Category</h3>
             <hr>
 
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
             <form action="{{ route('category.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('POST')

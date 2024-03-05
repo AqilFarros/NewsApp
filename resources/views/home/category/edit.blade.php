@@ -6,6 +6,14 @@
             <h3>Category Update</h3>
             <hr>
 
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
             <form action="{{ route('category.update', $category->id) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')

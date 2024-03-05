@@ -32,9 +32,16 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="mb-2">
                     <label for="editor" class="col-sm-2 col-form-label">Content</label>
                     <textarea id="editor" name="content"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-plus"></i>
+                        Add News
+                    </button>
                 </div>
 
                 <script>

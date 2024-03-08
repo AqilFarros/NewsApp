@@ -30,7 +30,7 @@ Auth::routes();
 Route::middleware('auth')->group(function() {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    // Route for admin
+    // Route for admin 
     Route::middleware(['auth', 'admin'])->group(function() {
         Route::resource('news', NewsController::class);
         Route::resource('category', CategoryController::class);

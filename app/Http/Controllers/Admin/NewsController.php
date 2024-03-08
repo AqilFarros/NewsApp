@@ -77,7 +77,9 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-        //
+        $title = 'News';
+        $news = News::findOrFail($id);
+        return view('home.news.show', compact('title', 'news'));
     }
 
     /**
@@ -88,7 +90,11 @@ class NewsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $title = 'News || Edit';
+        $news = News::findOrFail($id);
+        $category = Category::all();
+
+        return view('home.news.edit', compact('title', 'news', 'category'));
     }
 
     /**

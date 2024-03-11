@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
@@ -106,7 +107,35 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required|max:255',
+            'category_id' => 'required',
+            'content' => 'required',
+            'image' => 'image|mimes:jpg,jpeg,png|max:5120'
+        ]);
+
+        $news = News::findOrFail($id);
+
+        if ($request->file('image')) {
+            Storage::disk('local')->delete('public/news/' . basename($news->image));
+
+            $image = $request->image;
+            $image->file('image')->storeAs('public/news', $image->hashName());
+
+            $news->update([
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'category_id' => $request->category_id,
+                'content' => $request->content
+            ]);
+        } else {
+            $news->update([
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'category_id' => $request->category_id,
+                'content' => $request->content
+            ]);
+        };
     }
 
     /**

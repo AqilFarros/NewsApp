@@ -119,14 +119,15 @@ class NewsController extends Controller
         if ($request->file('image')) {
             Storage::disk('local')->delete('public/news/' . basename($news->image));
 
-            $image = $request->image;
-            $image->file('image')->storeAs('public/news', $image->hashName());
+            $image = $request->file('image');
+            $image->storeAs('public/news', $image->hashName());
 
             $news->update([
                 'title' => $request->title,
                 'slug' => Str::slug($request->title),
                 'category_id' => $request->category_id,
-                'content' => $request->content
+                'content' => $request->content,
+                'image'=> $image->hashName()
             ]);
         } else {
             $news->update([
@@ -136,6 +137,8 @@ class NewsController extends Controller
                 'content' => $request->content
             ]);
         };
+
+        return redirect()->route('news.index')->with('success', 'News Berhasil Diubah');
     }
 
     /**
@@ -146,6 +149,12 @@ class NewsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $news = News::findOrFail($id);
+
+        Storage::disk('local')->delete('public/news/' . basename($news->image));
+
+        $news->delete();
+
+        return redirect()->route('news.index')->with('success', 'News Berhasil Dihapus');
     }
 }

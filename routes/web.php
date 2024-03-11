@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\NewsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Profile\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,9 +31,10 @@ Auth::routes();
 Route::middleware('auth')->group(function() {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     // Route for admin 
     Route::middleware(['auth', 'admin'])->group(function() {
         Route::resource('news', NewsController::class);
-        Route::resource('category', CategoryController::class);
+        Route::resource('category', CategoryController::class)->except('show');
     });
 });

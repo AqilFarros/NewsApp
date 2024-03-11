@@ -45,9 +45,14 @@
                                         <a href="{{ route('news.edit', $row->id) }}" class="btn btn-warning">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button class="btn btn-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <form action="{{ route('news.destroy', $row->id) }}" method="post"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @empty

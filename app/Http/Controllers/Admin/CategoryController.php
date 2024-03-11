@@ -6,7 +6,9 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -45,6 +47,28 @@ class CategoryController extends Controller
             'name' => 'required|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
+
+        $messages = [
+            'name.required' => 'Nama kategori wajib diisi',
+            'name.max' => 'Nama kategori maksimal 255 karakter',
+            'image.image' => 'File yang diupload harus gambar',
+            'image.mimes' => 'File yang diupload harus berformat jpeg, png, jpg',
+            'image.max' => 'Ukuran gambar maksimal 5MB',
+            'image.required' => 'Gambar wajib diisi'
+        ];
+
+        //membuat validasi
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'image' => 'image|mimes:jpeg,png,jpg|max:5120|required'
+        ], $messages);
+
+        //jika validasi gagal
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $image = $request->file('image');
         $image->storeAs('public/category', $image->hashName());

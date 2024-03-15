@@ -11,6 +11,13 @@
         </li>
 
         @if (Auth::user()->role == 'admin')
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('all-user') }}">
+                <i class="bi bi-grid"></i>
+                <span>User</span>
+            </a>
+        </li>
+
             <li class="nav-item">
                 <a class="nav-link " href="{{ route('category.index') }}">
                     <i class="bi bi-basket2"></i>

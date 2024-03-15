@@ -20,7 +20,7 @@ class NewsController extends Controller
     {
         $title = 'Index News';
         // get data terbaru dari table news untuk dikirim ke view
-        $news = News::latest()->paginate(5)->all();
+        $news = News::latest()->paginate(5);
         $category = Category::all();
         return view('home.news.index', compact('title', 'category', 'news'));
     }

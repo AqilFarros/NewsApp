@@ -11,8 +11,8 @@ class FrontendController extends Controller
 {
     public function index() {
         $category = Category::latest()->get();
-        $newsCategory = News::with('category')->latest()->get();
+        $sliderNews = News::latest()->limit(3)->get();
 
-        return view('frontend.news.index', compact('category', 'newsCategory'));
+        return view('frontend.news.index', compact('category', 'sliderNews'));
     }
 }

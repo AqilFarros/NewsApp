@@ -15,4 +15,22 @@ class FrontendController extends Controller
 
         return view('frontend.news.index', compact('category', 'sliderNews'));
     }
+
+    public function detailNews($slug) {
+        $category = Category::latest()->get();
+        $news = News::where('slug', $slug)->first();
+        $allNews = News::latest()->get();
+
+        return view('frontend.news.detail', compact('category', 'news', 'allNews'));
+    }
+
+    public function detailCategory($slug) {
+        $category = Category::latest()->get();
+
+        $detailCategory = Category::where('slug', $slug)->first();
+        $news = News::where('category_id', $detailCategory->id)->latest()->paginate(5);
+        $allNews = News::latest()->get();
+
+        return view('frontend.news.detailCategory', compact('category', 'detailCategory', 'news', 'allNews'));
+    }
 }

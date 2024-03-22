@@ -19,6 +19,8 @@ use App\Http\Controllers\Frontend\FrontendController;
 */
 
 Route::get('/', [FrontendController::class, 'index']);
+Route::get('/detail/news/{slug}', [FrontendController::class, 'detailNews'])->name('detail-news');
+Route::get('/detail/category/{slug}', [FrontendController::class, 'detailCategory'])->name('detail-category');
 
 Auth::routes();
 

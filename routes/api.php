@@ -25,6 +25,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // untuk mengakses harus dalam posisi login
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/updatePassword', [AuthController::class, 'updatePassword']);
+});
+
+// Route For Admin
+Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
+    Route::post('/category/create', [CategoryController::class, 'store']);
+    Route::post('/category/update/{id}', [CategoryController::class, 'update']);
+    Route::delete('/category/destroy/{id}', [CategoryController::class, 'destroy']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);

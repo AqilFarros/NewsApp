@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -101,12 +102,14 @@ class AuthController extends Controller
         ]);
     }
 
-    public function allUsers() {
+    public function allUsers()
+    {
         $users = User::where('role', 'user')->get();
         return ResponseFormatter::success($users, 'Data User Berhasil Diambil');
     }
 
-    public function updatePassword(Request $request) {
+    public function updatePassword(Request $request)
+    {
         try {
             $this->validate($request, [
                 'old_password' => 'required',
@@ -116,7 +119,7 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            if(!Hash::check($request->old_password, $user->password)) {
+            if (!Hash::check($request->old_password, $user->password)) {
                 return ResponseFormatter::error([
                     'message' => 'Password Lama Tidak Sesuai'
                 ], 'Authentication Failed', 401);
@@ -139,6 +142,74 @@ class AuthController extends Controller
                 'message' => 'Something Went Wrong',
                 'error' => $error
             ], 'Update Password Failed', 500);
+        }
+    }
+
+    public function storeProfile(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'first_name' => 'required|string|max:255',
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            ]);
+
+            $user = auth()->user();
+ 
+            $image = $request->file('image');
+            $image->storeAs('public/profile', $image->hashName());
+
+            $user->profile()->create([
+                'first_name' => $request->first_name,
+                'image' => $image->hashName()
+            ]);
+
+            return ResponseFormatter::success($user->profile, 'Profile Has Been Created');
+        } catch (Exception $error) {
+            return ResponseFormatter::error([
+                'message' => 'Something Went Wrong',
+                'error' => $error
+            ], 'Failed To Update Profile', 500);
+        }
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'first_name' => 'required|string|max:255',
+                'image' => 'image|mimes:jpeg,png,jpg|max:2048'
+            ]);
+
+            $user = auth()->user();
+
+            if (!$user->profile) {
+                return ResponseFormatter::error([
+                    'message' => 'Profile Not Found'
+                ], 'Failed To Update Profile', 404);
+            }
+
+            if ($request->file('image') == '') {
+                $user->profile->update([
+                    'first_name' => $request->first_name
+                ]);
+            } else {
+                Storage::disk('local')->delete('public/profile/' . basename($user->image));
+
+                $image = $request->file('image');
+                $image->storeAs('public/profile', $image->hashName());
+
+                $user->profile->update([
+                    'first_name' => $request->first_name,
+                    'image' => $image->hashName()
+                ]);
+            }
+
+            return ResponseFormatter::success($user->profile, 'Data Profile Has Been Updated');
+        } catch (Exception $error) {
+            return ResponseFormatter::error([
+                'message' => 'Something Went Wrong',
+                'error' => $error
+            ], 'Failed To Update Profile', 500);
         }
     }
 }
